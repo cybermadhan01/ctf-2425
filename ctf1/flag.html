@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybel Emporium - CTF Challenge v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            color: #1f2937; /* Tailwind gray-800 */
+        }
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            font-weight: 600; /* Tailwind semibold */
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Tailwind blue-600 */
+            transform: scale(1.02);
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Tailwind gray-500 */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Tailwind gray-600 */
+        }
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .message-box.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .message-box-success {
+            background-color: #10b981; /* Tailwind emerald-500 */
+            color: white;
+        }
+        .page-view {
+            display: none; /* Hidden by default, shown by JS */
+        }
+        .page-view.active {
+            display: block;
+        }
+        /* Input field styling */
+        .form-input {
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6; /* Tailwind blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); /* Tailwind blue-500 focus ring */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" onclick="showPage('products-view'); return false;" class="text-2xl font-bold text-blue-600">Cybel Emporium</a>
+            <div>
+                <a href="#" onclick="showPage('products-view'); return false;" class="text-gray-600 hover:text-blue-500 px-3 py-2">Products</a>
+                <a href="#" onclick="showPage('ctf-info-view'); return false;" class="text-gray-600 hover:text-blue-500 px-3 py-2">CTF Info</a>
+                <a href="#" id="cart-link" onclick="showPage('cart-view'); return false;" class="text-gray-600 hover:text-blue-500 px-3 py-2">Cart (0)</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" class="flex-grow container mx-auto px-6 py-8">
+
+        <div id="products-view" class="page-view active">
+            <section class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Our Store!</h1>
+                <p class="text-lg text-gray-600">Find the best cyber-themed gadgets. Complete an order to find the flag!</p>
+            </section>
+            <section id="products" class="mb-12">
+                <h2 class="text-3xl font-semibold text-gray-700 mb-8 text-center">Our Products</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="product-card bg-white p-6 shadow-lg rounded-xl">
+                        <img src="https://placehold.co/600x400/e0e7ff/4338ca?text=Qubit+Keyboard" alt="Quantum Qubit Keyboard" class="w-full h-48 object-cover rounded-md mb-4" onerror="this.src='https://placehold.co/600x400/e2e8f0/cbd5e0?text=Image+Error'; this.alt='Error loading image'">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Quantum Qubit Keyboard</h3>
+                        <p class="text-gray-600 mb-1 text-sm">Types at the speed of thought (almost).</p>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">$299.99</p>
+                        <button class="btn btn-primary w-full" onclick="addToCart('Quantum Qubit Keyboard', 299.99)">Add to Cart</button>
+                    </div>
+                    <div class="product-card bg-white p-6 shadow-lg rounded-xl">
+                        <img src="https://placehold.co/600x400/fffbeb/f59e0b?text=Stealth+Mouse" alt="Stealth-Mode Mouse" class="w-full h-48 object-cover rounded-md mb-4" onerror="this.src='https://placehold.co/600x400/e2e8f0/cbd5e0?text=Image+Error'; this.alt='Error loading image'">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Stealth-Mode Mouse</h3>
+                        <p class="text-gray-600 mb-1 text-sm">So silent, it's like it's not even there.</p>
+                        <p class="text-2xl font-bold text-amber-500 mb-4">$79.99</p>
+                        <button class="btn btn-primary w-full" onclick="addToCart('Stealth-Mode Mouse', 79.99)">Add to Cart</button>
+                    </div>
+                    <div class="product-card bg-white p-6 shadow-lg rounded-xl">
+                        <img src="https://placehold.co/600x400/dcfce7/16a34a?text=Cryptex+USB" alt="Cryptex USB Drive" class="w-full h-48 object-cover rounded-md mb-4" onerror="this.src='https://placehold.co/600x400/e2e8f0/cbd5e0?text=Image+Error'; this.alt='Error loading image'">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Cryptex USB Drive</h3>
+                        <p class="text-gray-600 mb-1 text-sm">Secure your data the old-fashioned way.</p>
+                        <p class="text-2xl font-bold text-green-600 mb-4">$49.99</p>
+                        <button class="btn btn-primary w-full" onclick="addToCart('Cryptex USB Drive', 49.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="cart-view" class="page-view">
+            <section class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-semibold text-gray-700 mb-6">Your Shopping Cart</h2>
+                <div id="cart-items-container" class="mb-6">
+                    <p class="text-gray-500">Your cart is currently empty.</p>
+                </div>
+                <div class="border-t pt-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-semibold text-gray-700">Total:</span>
+                        <span id="cart-total" class="text-xl font-bold text-gray-800">$0.00</span>
+                    </div>
+                    <button id="proceed-to-checkout-btn" class="btn btn-primary w-full" onclick="showPage('checkout-view')" disabled>Proceed to Checkout</button>
+                </div>
+            </section>
+        </div>
+
+        <div id="checkout-view" class="page-view">
+            <section class="bg-white p-8 rounded-xl shadow-lg max-w-lg mx-auto">
+                <h2 class="text-3xl font-semibold text-gray-700 mb-6">Checkout</h2>
+                <form id="checkout-form" onsubmit="placeOrder(event)">
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="John Doe" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                        <textarea id="address" name="address" rows="3" class="form-input" placeholder="123 Cyber Street, Webville" required></textarea>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Note: This is a simulated checkout for a CTF challenge. No real data is processed or stored.</p>
+                    <button type="submit" class="btn btn-primary w-full">Place Order</button>
+                </form>
+            </section>
+        </div>
+
+        <div id="order-completion-view" class="page-view">
+            <section class="bg-white p-8 rounded-xl shadow-lg text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h2 class="text-3xl font-semibold text-green-600 mb-3">Thank You For Your Order!</h2>
+                <p class="text-gray-700 mb-2">Your order has been successfully placed (simulated).</p>
+                <p class="text-gray-600 mb-4">An order confirmation has been "sent" to your "email".</p>
+                <p class="text-sm text-gray-500 mb-6">
+                    Remember to inspect all aspects of this page carefully. Sometimes, secrets are hidden in plain sight... or just out of it.
+                </p>
+                <button class="btn btn-primary" onclick="showPage('products-view'); resetCartState();">Continue Shopping</button>
+            </section>
+        </div>
+        
+        <div id="ctf-info-view" class="page-view">
+            <section class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">A Note for Aspiring Cyber Sleuths (v2)</h2>
+                <p class="text-gray-600 mb-2">
+                    Welcome back to Cybel Emporium! This version of the challenge has a different twist.
+                </p>
+                <p class="text-gray-600 mb-2">
+                    Your mission is to complete a simulated purchase. Once your "order" is confirmed,
+                    the flag you seek will be hidden on the order completion page.
+                </p>
+                <p class="text-gray-600 mb-2">
+                    You'll need to use your browser's developer tools (usually by right-clicking and selecting "Inspect" or "Inspect Element")
+                    to examine the HTML source code of the order completion page. The flag is embedded there as a comment.
+                </p>
+                <p class="text-gray-600 font-semibold">
+                    The flag format is: <code>cybel{SOME-TEXT-HERE}</code>. Happy hunting!
+                </p>
+                <p class="text-xs text-gray-500 mt-4">
+                    (This is a CTF challenge. All e-commerce functionality is simulated for this purpose.)
+                </p>
+                 <button class="btn btn-secondary mt-6" onclick="showPage('products-view')">Back to Products</button>
+            </section>
+        </div>
+
+        <div id="message-center" class="message-box hidden"></div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 text-center">
+        <p>&copy; 2025 Cybel Emporium. All rights reserved (for the purpose of this challenge!).</p>
+        <p>Designed for educational CTF purposes. Flag format: cybel{...}</p>
+    </footer>
+
+    <script>
+        // --- Global State ---
+        let cart = []; // Array to store cart items { name, price }
+        const pageViews = document.querySelectorAll('.page-view'); // All page divs
+
+        // --- DOM Elements ---
+        const cartLink = document.getElementById('cart-link');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartTotalEl = document.getElementById('cart-total');
+        const proceedToCheckoutBtn = document.getElementById('proceed-to-checkout-btn');
+        const checkoutForm = document.getElementById('checkout-form');
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a message in the message center.
+         * @param {string} text - The message to display.
+         * @param {string} type - 'success' or 'error'.
+         * @param {number} duration - How long to display the message in milliseconds.
+         */
+        function showMessage(text, type = 'success', duration = 3000) {
+            const messageEl = document.getElementById('message-center');
+            if (!messageEl) return;
+
+            messageEl.textContent = text;
+            messageEl.className = 'message-box'; // Reset classes
+            if (type === 'success') {
+                messageEl.classList.add('message-box-success');
+            } else if (type === 'error') {
+                messageEl.classList.add('message-box-error', 'bg-red-500', 'text-white'); // Ensure error is distinct
+            } else {
+                 messageEl.classList.add('bg-blue-500', 'text-white'); 
+            }
+            messageEl.classList.remove('hidden');
+
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, duration);
+        }
+
+        /**
+         * Shows a specific page view and hides others.
+         * @param {string} pageId - The ID of the page view to show.
+         */
+        function showPage(pageId) {
+            pageViews.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            window.scrollTo(0, 0); // Scroll to top on page change
+        }
+
+        // --- Cart Logic ---
+
+        /**
+         * Adds a product to the cart.
+         * @param {string} productName - The name of the product.
+         * @param {number} productPrice - The price of the product.
+         */
+        function addToCart(productName, productPrice) {
+            cart.push({ name: productName, price: productPrice });
+            updateCartDisplay();
+            showMessage(`${productName} added to cart!`, 'success');
+        }
+
+        /**
+         * Updates the cart display (link, items, total).
+         */
+        function updateCartDisplay() {
+            // Update cart link in header
+            cartLink.textContent = `Cart (${cart.length})`;
+
+            // Update cart items view
+            if (cartItemsContainer) {
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="text-gray-500">Your cart is currently empty.</p>';
+                    if (proceedToCheckoutBtn) proceedToCheckoutBtn.disabled = true;
+                } else {
+                    cartItemsContainer.innerHTML = cart.map(item => `
+                        <div class="flex justify-between items-center py-2 border-b last:border-b-0">
+                            <span class="text-gray-700">${item.name}</span>
+                            <span class="text-gray-600 font-semibold">$${item.price.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+                    if (proceedToCheckoutBtn) proceedToCheckoutBtn.disabled = false;
+                }
+            }
+
+            // Update cart total
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            if (cartTotalEl) {
+                cartTotalEl.textContent = `$${total.toFixed(2)}`;
+            }
+        }
+        
+        /**
+         * Resets the cart state and updates display.
+         */
+        function resetCartState() {
+            cart = [];
+            updateCartDisplay();
+            if (checkoutForm) checkoutForm.reset(); // Reset checkout form fields
+        }
+
+
+        // --- Checkout Logic ---
+
+        /**
+         * Handles the "Place Order" action.
+         * @param {Event} event - The form submission event.
+         */
+        function placeOrder(event) {
+            event.preventDefault(); // Prevent actual form submission
+            
+            // Basic validation check (though HTML 'required' handles most)
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !email || !address) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            console.log("Order placed (simulated). Navigating to completion page.");
+            // The flag is on the 'order-completion-view' page as an HTML comment.
+            showPage('order-completion-view');
+            // Optionally, clear the cart after order placement, but for CTF, maybe not,
+            // so they can retry if they miss it. Or add a "Continue Shopping" button that resets.
+            // For now, let's keep the cart as is, but reset it if they "Continue Shopping".
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('products-view'); // Show products page by default
+            updateCartDisplay(); // Initialize cart display
+
+            // Initial console message for CTF players
+            console.log("Welcome, Cyber Investigator! This CTF challenge has changed.");
+            console.log("The goal is to complete a simulated order and find the flag on the order completion page.");
+            console.log("You'll need to inspect the HTML source of that page. Good luck!");
+            console.log("The flag format is cybel{SOME-TEXT-HERE}");
+        });
+
+    </script>
+</body>
+</html>
